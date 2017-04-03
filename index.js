@@ -1,8 +1,7 @@
 var express = require('express');
 var app = express();
-var validURL = require('valid-url');
 var mongowrap = require('./scripts/mongowrap.js');
-var urlCounter = 0;
+var googlewrap = require('./scripts/googlewrap.js');
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
@@ -21,8 +20,9 @@ app.get('/api/imagesearch/:SEARCHTERM', function(request, response) {
   // Process the searchterm into mongodb
   mongowrap.addTerm(request.params.SEARCHTERM);
   // Process the search request
-  // SOME CALL TO GOOGLE API GOES HERE.
-
+  googlewrap.imageSearch(request.params.SEARCHTERM, request.query.offset, function (result) {
+    response.send(result);
+  });
 });
 
 app.get('/api/latest/imagesearch/', function(request, response) {

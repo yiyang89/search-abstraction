@@ -13,9 +13,17 @@ module.exports.getHistory = function(callback) {
     } else {
       console.log('Connection established for get history to ', url);
       db.collection('searchHistory').find().toArray(function (err, result) {
-        console.log(result);
+        // Strip the id from the results array.
+        var returnArr = [];
+        result = result.reverse();
+        for (var i = 0; i < 10; i++){
+          var oneEntry = {};
+          oneEntry.term = result[i].term;
+          oneEntry.when = result[i].when;
+          returnArr.push(oneEntry);
+        }
         db.close();
-        callback(result);
+        callback(returnArr);
       });
     }
   });
@@ -40,54 +48,3 @@ module.exports.addTerm = function(term) {
     }
   });
 };
-
-// module.exports.getSize = function(callback) {
-//   MongoClient.connect(url, function (err, db) {
-//     if (err) {
-//       console.log('Unable to connect to the mongoDB server. Error:', err);
-//     } else {
-//       console.log('Connection established for size query to', url);
-//       db.collection('urls').find().toArray(function (err, result) {
-//         console.log(result);
-//         db.close();
-//         callback(result.length);
-//       });
-//     }
-//   });
-// };
-//
-// module.exports.addEntry = function(id, address, callback) {
-//   MongoClient.connect(url, function (err, db) {
-//     if (err) {
-//       console.log('Unable to connect to the mongoDB server. Error:', err);
-//     } else {
-//       db.collection('urls').insert({"_id":id, "url":address}, function (err, result) {
-//         if (err) {
-//           console.log(err);
-//         } else {
-//           console.log('Inserted documents into the "users" collection. The documents inserted with "_id" are:', result.length, result);
-//           db.close();
-//           callback(id);
-//         }
-//       });
-//     }
-//   });
-// };
-//
-// module.exports.retrieveEntry = function(entryID, callback) {
-//   MongoClient.connect(url, function (err, db) {
-//     if (err) {
-//       console.log('Unable to connect to the mongoDB server. Error:', err);
-//     } else {
-//       db.collection('urls').find({'_id':entryID}).toArray( function (err, result) {
-//         if (err) {
-//           console.log(err);
-//         } else {
-//           console.log(result);
-//           db.close();
-//           callback(result[0].url);
-//         }
-//       });
-//     }
-//   });
-// };
